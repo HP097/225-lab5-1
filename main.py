@@ -6,10 +6,12 @@ app = Flask(__name__)
 # Persistence logic for the school NFS
 DATABASE = 'file:/nfs/tasks.db?vfs=unix-dotfile'
 
+
 def get_db():
     db = sqlite3.connect(DATABASE, uri=True)
     db.row_factory = sqlite3.Row
     return db
+
 
 @app.route('/')
 def index():
@@ -29,15 +31,17 @@ def index():
         </ul>
     ''', tasks=tasks)
 
+
 @app.route('/add', methods=['POST'])
 def add():
-    task = request.form.get('task', '').strip() # Security: Sanitizing input
+    task = request.form.get('task', '').strip()  # Security: Sanitizing input
     if task:
         db = get_db()
         db.execute('INSERT INTO tasks (task) VALUES (?)', (task,))
         db.commit()
     return redirect(url_for('index'))
 
+
 if __name__ == "__main__":
     # Security: Debug is OFF for production deployment
-    app.run(debug=False, host='0.0.0.0', port=5000) # nosec
+    app.run(debug=False, host='0.0.0.0', port=5000)  # nosec
