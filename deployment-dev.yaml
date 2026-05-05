@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hitesh-lab5-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: task-manager
+  template:
+    metadata:
+      labels:
+        app: task-manager
+    spec:
+      containers:
+      - name: flask
+        image: IMAGE_PLACEHOLDER
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - name: nfs-vol
+          mountPath: /nfs
+      volumes:
+      - name: nfs-vol
+        persistentVolumeClaim:
+          claimName: pyakurh2-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hitesh-task-service
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 10.48.228.114
+  ports:
+  - port: 80
+    targetPort: 5000
+  selector:
+    app: task-manager
